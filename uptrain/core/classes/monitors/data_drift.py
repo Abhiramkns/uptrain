@@ -143,7 +143,7 @@ class DataDrift(AbstractMonitor):
                         drift_detected = drift_detected or (this_psi > 0.3)
                 self.drift_detected = drift_detected
                 if self.drift_detected:
-                    alert = "Data Drift last detected at " + str(self.count) + " for Embeddings with Earth moving distance = " + str(float(self.costs[0]))
+                    alert = "Data Drift last detected at " + str(self.count) + " for Embeddings with Earth moving distance = " + str(round(float(self.costs[0]),2))
                     self.log_handler.add_alert(
                         "Data Drift Alert 🚨",
                         alert,
@@ -163,6 +163,14 @@ class DataDrift(AbstractMonitor):
                     dict_emc,
                     self.count,
                     self.dashboard_name,
+                    file_name='drift'
+                )
+                self.log_handler.add_scalars(
+                    self.measurable.col_name() + " - earth_moving_costs_embedding",
+                    {list(dict_emc.keys())[0]: 0.5},
+                    self.count,
+                    self.dashboard_name,
+                    file_name='threshold'
                 )
             else:
                 dict_psi = dict(

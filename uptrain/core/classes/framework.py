@@ -155,7 +155,7 @@ class Framework:
             add_data_to_warehouse(deepcopy(smart_data), path_smart_data)
 
         edge_cases_txt = str(self.selected_count) + " edge cases identified out of " + str(self.predicted_count) + " total samples"
-        if self.selected_count > 0:
+        if self.selected_count > -10:
             self.log_handler.add_alert(
                 "Number of edge cases collected",
                 edge_cases_txt,

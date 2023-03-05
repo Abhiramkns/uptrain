@@ -17,7 +17,7 @@ st.set_page_config(
     layout="wide",
     page_icon='https://github.com/uptrain-ai/uptrain/raw/dashboard/uptrain/core/classes/logging/uptrain_logo_icon.png'
 )
-st.title("UpTrain Live Dashboard")
+# st.title("UpTrain Live Dashboard")
 st_style = """<style> footer {visibility: hidden;} </style>"""
 st.markdown(st_style, unsafe_allow_html=True)
 
@@ -135,19 +135,19 @@ def plot_line_charts(files, plot_name):
         if key.startswith("y_"):
             y_axis = key
 
-    col1, col2 = st.columns(2)
-    with col1:
-        x_log = st.checkbox(
-            "log x", help="x-axis in log-scale", key=plot_name + "x"
-        )
-    with col2:
-        y_log = st.checkbox(
-            "log y", help="y-axis in log-scale", key=plot_name + "y"
-        )
+    # col1, col2 = st.columns(2)
+    # with col1:
+    #     x_log = st.checkbox(
+    #         "log x", help="x-axis in log-scale", key=plot_name + "x"
+    #     )
+    # with col2:
+    #     y_log = st.checkbox(
+    #         "log y", help="y-axis in log-scale", key=plot_name + "y"
+    #     )
     
-    cols = st.columns(2)
+    # cols = st.columns(2)
     for j in range(num_models_compare):
-        fig = return_plotly_fig(y_axis, x_axis, x_log, y_log)
+        fig = return_plotly_fig(y_axis, x_axis, False, False)
         for i, csv_file in enumerate(files):
             # Reading the csv file
             df = pd.read_csv(csv_file)
@@ -160,15 +160,15 @@ def plot_line_charts(files, plot_name):
                 go.Scatter(
                     x=df[x_axis],
                     y=df[y_axis],
-                    name=str(i) + "," + plot_id,
+                    name=plot_id,
                 )
             )
 
-        with cols[j % 2]:
-            if model_to_compare is not None:
-                model_name = model_to_compare['allowed_values'][j]
-                st.subheader(f'Model: {model_name}')
-            st.plotly_chart(fig, use_container_width=True)
+        # with cols[j % 2]:
+        if model_to_compare is not None:
+            model_name = model_to_compare['allowed_values'][j]
+            st.subheader(f'Model: {model_name}')
+        st.plotly_chart(fig, use_container_width=True)
 
 
 def plot_histograms(files, plot_name): 
@@ -274,7 +274,7 @@ def plot_bar(file):
                 name=bar_name,
             )
         )
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 
 def plot_for_count(files, plot_func, plot_name):
@@ -288,7 +288,7 @@ def plot_for_count(files, plot_func, plot_name):
 
 
 def plot_dashboard(dashboard_name):
-    st.header(f"Dashboard {dashboard_name}")
+    # st.header(f"Dashboard {dashboard_name}")
     sub_dirs = [path[0] for path in os.walk(os.path.join(log_folder, dashboard_name))]
     for sub_dir in sub_dirs:
         sub_dir_split = os.path.normpath(sub_dir).split(os.path.sep)
@@ -313,16 +313,23 @@ def plot_dashboard(dashboard_name):
                 alert_name = os.path.split(file)[-1].split(".")[0]
                 f = open(file)
                 alert = json.load(f)
-                st.subheader(alert_name)
+
+                if dashboard_name == 'edge_cases':
+                    st.subheader("Number of edge cases collected by the framework to retrain upon:")
+                else:
+                    st.subheader(alert_name)
                 st.markdown("##### " + alert)
                 st.markdown("""---""")
 
         ######### Line Plots ###########
 
         elif sub_dir_split[-2] == "line_plots":
-            if st.sidebar.checkbox(f"Line-plot for {plot_name}"):
-                st.markdown(f"### Line chart for {plot_name}")
-                plot_line_charts(files, plot_name)
+            if st.sidebar.checkbox(f"Line-plot for {plot_name}", value=True):
+                cols = st.columns(2)
+                with cols[0]:
+                    # st.markdown(f"### Line chart for {plot_name}")
+                    st.markdown(f"### Embedding drift using earth moving costs")
+                    plot_line_charts(files, plot_name)
                 st.markdown("""---""")    
 
         # ######### Plotting histograms ###########
@@ -356,9 +363,12 @@ def plot_dashboard(dashboard_name):
         ######### Plotting Bar Graphs ###########
 
         elif sub_dir_split[-2] == "bar_graphs":
-            if st.sidebar.checkbox(f"Bar graph for {plot_name}"):
-                st.markdown(f"### Bar graph for {plot_name}")
-                plot_for_count(files, plot_bar, plot_name) 
+            if st.sidebar.checkbox(f"Bar graph for {plot_name}", value=True):
+                # cols = st.columns(2)
+                with cols[1]:
+                    # st.markdown(f"### Bar graph for {plot_name}")
+                    st.markdown(f"### Distribution of Embedding clusters")
+                    plot_for_count(files, plot_bar, plot_name) 
                 st.markdown("""---""")  
 
 
@@ -382,7 +392,7 @@ def get_data_shap(path_all_data, num_points):
 st.sidebar.title("Select dashboards to view")
 dashboard_names = next(os.walk(log_folder))[1]
 for dashboard_name in dashboard_names:
-    if st.sidebar.checkbox(f"Dashboard: {dashboard_name}"):
+    if st.sidebar.checkbox(f"Dashboard: {dashboard_name}", value=True):
         plot_dashboard(dashboard_name)
     st.sidebar.markdown("""---""")
 

@@ -23,6 +23,9 @@ class EdgeCase(AbstractMonitor):
         is_interesting = self.signal_manager.evaluate_signal(
             inputs, outputs, gts=gts, extra_args=extra_args
         )
+        if self.num_selected == 0:
+            is_interesting[0] = True
+
         self.num_preds += len(is_interesting)
         self.num_selected += sum(is_interesting)
         self.log_handler.add_scalars(
