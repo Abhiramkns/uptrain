@@ -1,4 +1,6 @@
+from .abstract_check import AbstractCheck
 from .abstract_monitor import AbstractMonitor
+from .accuracy import Accuracy
 from .concept_drift import ConceptDrift
 from .custom_monitor import CustomMonitor
 from .data_drift import DataDrift

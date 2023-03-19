@@ -8,6 +8,9 @@ import random
 import numpy as np
 from sklearn.preprocessing import normalize
 
+from queue import SimpleQueue
+from threading import Thread
+
 from uptrain.core.classes.helpers import DatasetHandler, ModelHandler, config_handler
 from uptrain.core.classes.logging import LogHandler
 from uptrain.core.classes.managers import CheckManager
@@ -52,50 +55,57 @@ class Framework:
         """
 
         cfg = config_handler.Config(**cfg_dict)
-        training_args = cfg.training_args
-        evaluation_args = cfg.evaluation_args
+        self.run_background_log_consumer = cfg.run_background_log_consumer
 
-        self.orig_training_file = training_args.orig_training_file
-        self.fold_name = cfg.retraining_folder
-        if os.path.exists(self.fold_name):
-            print("Deleting the folder: ", self.fold_name)
-            shutil.rmtree(self.fold_name)
-        os.mkdir(self.fold_name)
+        if self.run_background_log_consumer:
+            self.msg_queue = SimpleQueue()
+            cfg_copy = deepcopy(cfg_dict)
+            cfg_copy.update({"run_background_log_consumer": False})
+            daemon = Thread(target=background_log_consumer_task, args=(self.msg_queue,cfg_copy,), daemon=True, name='Background Log Consumer')
+            daemon.start()
+        else:
+            training_args = cfg.training_args
+            evaluation_args = cfg.evaluation_args
 
-        self.log_data = cfg.logging_args.log_data
-        self.use_cache = cfg.use_cache
-        self.cache = {}
-        self.predicted_count = 0
-        self.extra_args = {}
-        self.checks = cfg.checks
-        self.batch_size = None
-        self.feat_name_list = cfg.feat_name_list
-        self.retrain_after = cfg.retrain_after
-        self.data_id_type = cfg.data_id
-        self.version = 0
-        self.if_retraining = cfg.retrain
-        self.path_all_data = os.path.join(self.fold_name, "all_data.csv")
-        self.log_handler = LogHandler(framework=self, cfg=cfg)
-        self.check_class_id = 0
+            self.orig_training_file = training_args.orig_training_file
+            self.fold_name = cfg.retraining_folder
+            if os.path.exists(self.fold_name):
+                print("Deleting the folder: ", self.fold_name)
+                shutil.rmtree(self.fold_name)
+            os.mkdir(self.fold_name)
 
-        self.dataset_handler = DatasetHandler(
-            cluster_plot_func=cfg.cluster_visualize_func
-        )
-        self.model_handler = ModelHandler()
-        self.check_manager = CheckManager(self, self.checks)
-        self.reset_retraining()
+            self.log_data = cfg.logging_args.log_data
+            self.use_cache = cfg.use_cache
+            self.cache = {}
+            self.predicted_count = 0
+            self.extra_args = {}
+            self.checks = cfg.checks
+            self.batch_size = None
+            self.feat_name_list = cfg.feat_name_list
+            self.retrain_after = cfg.retrain_after
+            self.data_id_type = cfg.data_id
+            self.version = 0
+            self.if_retraining = cfg.retrain
+            self.path_all_data = os.path.join(self.fold_name, "all_data.csv")
+            self.log_handler = LogHandler(framework=self, cfg=cfg)
+            self.check_class_id = 0
 
-        if training_args.data_transformation_func:
-            self.set_data_transformation_func(training_args.data_transformation_func)
-        if training_args.annotation_method:
-            am = training_args.annotation_method
-            self.set_annotation_method(am.method, args=am.args)
-        if evaluation_args.golden_testing_dataset:
-            self.set_golden_testing_dataset(evaluation_args.golden_testing_dataset)
-        if training_args.training_func:
-            self.set_training_func(training_args.training_func)
-        if evaluation_args.inference_func:
-            self.set_inference_func(evaluation_args.inference_func)
+            self.dataset_handler = DatasetHandler(framework=self, cfg=cfg)
+            self.model_handler = ModelHandler()
+            self.check_manager = CheckManager(self, self.checks)
+            self.reset_retraining()
+
+            if training_args.data_transformation_func:
+                self.set_data_transformation_func(training_args.data_transformation_func)
+            if training_args.annotation_method:
+                am = training_args.annotation_method
+                self.set_annotation_method(am.method, args=am.args)
+            if evaluation_args.golden_testing_dataset:
+                self.set_golden_testing_dataset(evaluation_args.golden_testing_dataset)
+            if training_args.training_func:
+                self.set_training_func(training_args.training_func)
+            if evaluation_args.inference_func:
+                self.set_inference_func(evaluation_args.inference_func)
 
     def reset_retraining(self):
         self.version += 1
@@ -134,7 +144,7 @@ class Framework:
         old_selected_count = self.selected_count
         smart_data = {}
 
-        is_interesting = self.is_data_interesting(
+        is_interesting, reasons = self.is_data_interesting(
             data, data["output"], data["gt"], extra_args=extra_args
         )
         num_selected_datapoints = np.sum(np.array(is_interesting))
@@ -142,7 +152,7 @@ class Framework:
         self.smart_data_ids.extend(np.array(data["id"])[np.array(is_interesting)])
 
         """
-        Log only the interesting test cases to data 
+        Log only the interesting test cases to data
         warehouse. Logged under sub-folder 'smart_data'
         """
         path_smart_data = os.path.join(
@@ -150,6 +160,7 @@ class Framework:
         )
 
         if self.log_data and (num_selected_datapoints > 0):
+            data.update({"reasons": reasons})
             smart_data = extract_data_points_from_batch(
                 data, np.where(is_interesting == True)[0]
             )
@@ -317,9 +328,9 @@ class Framework:
         df.to_csv(self.path_all_data, index=False)
 
         """
-        TODO: Currently assumes that input is only one column. 
-        In some cases, the input might have multiple data 
-        structures (e.g., cascaded models). 
+        TODO: Currently assumes that input is only one column.
+        In some cases, the input might have multiple data
+        structures (e.g., cascaded models).
         """
         df_gt = df.loc[gt_id_indices]
         data = dict(zip(
@@ -380,9 +391,10 @@ class Framework:
         data = {}
         for col in cols:
             data.update({col: np.array(list(inputs[col]))})
-        data.update({"ids": np.array(ids)})
+        if 'id' not in cols:
+            data.update({"id": np.array(ids)})
         return data
-    
+
     def convert_dict_values_to_numpy_values(self, inputs: dict) -> dict:
         data = {}
         for key, value in inputs.items():
@@ -390,29 +402,48 @@ class Framework:
         return data
 
     def log(self, inputs=None, outputs=None, gts=None, identifiers=None, extra=None):
-        # if (inputs is not None) and (outputs is None):
-        #     raise Exception("Predictions should be present while logging inputs")
-        if (inputs is None) and (outputs is not None):
-            raise Exception("Inputs should be present while logging predictions")
-        if (gts is not None) and (identifiers is None):
-            raise Exception("Identifiers should be present while logging ground truths")
+        if self.run_background_log_consumer:
+            data = {"inputs": inputs, "outputs": outputs, "gts": gts, "identifiers": identifiers, "extra": extra}
+            try:
+                self.msg_queue.put(data)
+            except:
+                print("Model monitoring failed!")
+            # Return identifiers by fetching it from the background thread
+            return
+        else:
+            # if (inputs is not None) and (outputs is None):
+            #     raise Exception("Predictions should be present while logging inputs")
+            if (inputs is None) and (outputs is not None):
+                raise Exception("Inputs should be present while logging predictions")
+            if (gts is not None) and (identifiers is None):
+                raise Exception("Identifiers should be present while logging ground truths")
 
-        if inputs is not None:
-            if isinstance(inputs, pd.DataFrame):
-                inputs = self.convert_inputs_table_to_dict(inputs)
-            elif isinstance(inputs, dict):
-                inputs = self.convert_dict_values_to_numpy_values(inputs)
-            else:
-                raise Exception("Inputs was expected to be a Pandas Dataframe or Python Dictionary")
-            identifiers = self.check_and_add_data(inputs, outputs)
+            if inputs is not None:
+                if isinstance(inputs, pd.DataFrame):
+                    inputs = self.convert_inputs_table_to_dict(inputs)
+                elif isinstance(inputs, dict):
+                    inputs = self.convert_dict_values_to_numpy_values(inputs)
+                else:
+                    raise Exception("Inputs was expected to be a Pandas Dataframe or Python Dictionary")
+                identifiers = self.check_and_add_data(inputs, outputs)
 
-        if gts is not None:
-            self.attach_ground_truth({"id": identifiers, "gt": gts})
+            if gts is not None:
+                self.attach_ground_truth({"id": identifiers, "gt": gts})
 
-        if self.need_retraining():
-            self.retrain()
+            if self.need_retraining():
+                self.retrain()
 
-        return identifiers
+            return identifiers
 
     def clear_cache(self):
         self.cache = {}
+
+def background_log_consumer_task(msg_queue, cfg):
+    framework = Framework(cfg_dict=cfg)
+    # run forever
+    while True:
+        # get the next message
+        data = msg_queue.get()
+
+        # log the message
+        framework.log(inputs=data['inputs'], outputs=data['outputs'], gts=data['gts'], identifiers=data['identifiers'], extra=data['extra'])

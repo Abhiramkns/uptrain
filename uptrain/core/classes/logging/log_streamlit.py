@@ -125,8 +125,10 @@ class StreamlitLogs:
         with open(file_name, "w") as f:
             json.dump(alert, f)
 
-    def add_bar_graphs(self, data, folder, count=-1):
+    def add_bar_graphs(self, data, folder, count=-1, hover_data={}):
         file_name = os.path.join(folder, str(count) + ".json")
+        if len(hover_data):
+            data.update({'hover_text': hover_data})
         with open(file_name, "w") as f:
             json.dump(data, f, cls=NumpyEncoder)
 
