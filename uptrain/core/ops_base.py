@@ -3,11 +3,12 @@
 - Arrow/Numpy conversion utils - since we leverage duckdb as a cache and ray for execution, intermediate 
 outputs are stored as Arrow batches. 
 """
+from typing import Union, Callable
 
 import duckdb
 import numpy as np
+import numba
 import pyarrow as pa
-from typing import Union
 
 
 def array_np_to_arrow(arr: np.ndarray) -> pa.Array:
@@ -58,38 +59,60 @@ class StatelessOperator:
         return f"{self.__class__.__name__}()"
 
 
-class SortTable(StatelessOperator):
-    """Sorts a table by a given column."""
-
-    def __init__(self, col: str, ascending: bool = True):
-        self.col = col
-        self.ascending = ascending
-
-    def run(self, tbl: pa.Table) -> pa.Table:
-        return tbl.sort_by(
-            [(self.col, "ascending" if self.ascending else "descending")]
-        )
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(col={self.col}, ascending={self.ascending})"
-
-
-class L2Dist_Running:
-    """Computes the L2 distance for the vector value at each id wrt to the previous value."""
+class AggregateOperator:
+    """Aggregate operators are stateful and require a compute loop to be defined."""
 
     id_col: str
     value_col: str
+    seq_col: str
     cache_conn: duckdb.DuckDBPyConnection
+    compute_loop: Callable
 
-    def __init__(self, id_col: str, value_col: str, sort_col: str) -> None:
+    def __init__(self, id_col: str, value_col: str, seq_col: str) -> None:
         self.id_col = id_col
         self.value_col = value_col
-        self.sort_col = sort_col
+        self.seq_col = seq_col
 
         self.cache_conn = duckdb.connect(":memory:")
         self.cache_conn.execute(
             f"CREATE TABLE intermediates (id LONG PRIMARY KEY, value FLOAT[]);"
         )  # TODO: support other types
+
+        self.compute_loop = self.generate_compute_loop(
+            numba.njit(inline="always")(self.compute_op)
+        )
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.id_col}, {self.value_col}, {self.seq_col})"
+
+    @staticmethod
+    def compute_op(value: float, interm_value: float) -> tuple[float, float]:
+        """Computes the aggregate value for the given value and intermediate value."""
+        raise NotImplementedError
+
+    @classmethod
+    def generate_compute_loop(cls, compute_fn):
+        """Generates a compute loop for the given function."""
+
+        @numba.njit
+        def compute_loop(id_array, value_array, interm_id_array, interm_value_array):
+            output_value_array = np.zeros(len(id_array))
+            new_interm_value_array = np.zeros_like(interm_value_array)
+
+            interm_idx = 0
+            interm_value = interm_value_array[interm_idx]
+            for idx, (_id, _value) in enumerate(zip(id_array, value_array)):
+                if _id != interm_id_array[interm_idx]:
+                    new_interm_value_array[interm_idx] = interm_value
+                    interm_idx += 1
+                    interm_value = interm_value_array[interm_idx]
+
+                output_value_array[idx], interm_value = compute_fn(_value, interm_value)
+            new_interm_value_array[interm_idx] = interm_value
+
+            return output_value_array, new_interm_value_array
+
+        return compute_loop
 
     def fetch_interm_state(
         self, batch: Union[pa.Table, pa.RecordBatch]
@@ -109,11 +132,11 @@ class L2Dist_Running:
                 WHERE {id_col} NOT IN (SELECT id FROM intermediates)
                 GROUP BY {id_col}
             )
-            ORDER BY 1
+            ORDER BY 1 ASC;
             """.format(
                 id_col=self.id_col,
                 value_col=self.value_col,
-                sort_col=self.sort_col,
+                sort_col=self.seq_col,
             )
         )
         interm_state = self.cache_conn.fetch_arrow_table()
@@ -131,24 +154,17 @@ class L2Dist_Running:
     def run(self, tbl: Union[pa.Table, pa.RecordBatch]) -> pa.Table:
         """We assume the input table is sorted by id, through usage of a Sort operator before."""
         tbl = arrow_batch_to_table(tbl)
-        id_array, value_array = table_arrow_to_np_arrays(
-            tbl, [self.id_col, self.value_col]
+        sorted_tbl = tbl.select([self.id_col, self.value_col, self.seq_col]).sort_by(
+            [(self.id_col, "ascending"), (self.seq_col, "ascending")]
         )
-        interm_id_array, interm_value_array = self.fetch_interm_state(tbl)
 
-        output_value_array = np.zeros(len(id_array))
-        new_interm_value_array = np.zeros_like(interm_value_array)
+        id_array, value_array = table_arrow_to_np_arrays(
+            sorted_tbl, [self.id_col, self.value_col]
+        )
+        interm_id_array, interm_value_array = self.fetch_interm_state(sorted_tbl)
 
-        interm_idx = 0
-        interm_value = interm_value_array[interm_idx]
-        for idx, (_id, _value) in enumerate(zip(id_array, value_array)):
-            if _id != interm_id_array[interm_idx]:
-                new_interm_value_array[interm_idx] = interm_value
-                interm_idx += 1
-                interm_value = interm_value_array[interm_idx]
-
-            output_value_array[idx] = np.sum(np.square(_value - interm_value))
-        new_interm_value_array[interm_idx] = interm_value
-
+        output_value_array, new_interm_value_array = self.compute_loop(
+            id_array, value_array, interm_id_array, interm_value_array
+        )
         self.update_interm_state(interm_id_array, new_interm_value_array)
         return np_arrays_to_arrow_table([id_array, output_value_array], ["id", "value"])
