@@ -3,12 +3,15 @@
 - Arrow/Numpy conversion utils - since we leverage duckdb as a cache and ray for execution, intermediate 
 outputs are stored as Arrow batches. 
 """
-from typing import Union, Callable
+
+from typing import Union, Callable, Any
 
 import duckdb
 import numpy as np
 import numba
 import pyarrow as pa
+from pydantic import BaseModel
+import ray
 
 
 def array_np_to_arrow(arr: np.ndarray) -> pa.Array:
@@ -49,8 +52,21 @@ def np_arrays_to_arrow_table(arrays: list[np.ndarray], cols: list[str]) -> pa.Ta
     )
 
 
-class StatelessOperator:
-    """Base class for stateless operators."""
+class Operator:
+    """Base class for all operators."""
+
+    def make_actor(self) -> "OperatorExecutor":
+        """Create a Ray actor for this operator."""
+        raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}()"
+
+
+class OperatorExecutor:
+    """Base class for all operator executors."""
+
+    op: Operator
 
     def run(self, *args, **kwargs) -> pa.Table:
         raise NotImplementedError
@@ -59,39 +75,45 @@ class StatelessOperator:
         return f"{self.__class__.__name__}()"
 
 
-class AggregateOperator:
-    """Aggregate operators are stateful and require a compute loop to be defined."""
+class WindowAggOp(BaseModel, Operator):
+    id_col: str  # aggregations are done per id
+    value_col: str  # the column to aggregate over
+    seq_col: str  # the column to sort by before aggregation
 
-    id_col: str
-    value_col: str
-    seq_col: str
+    def make_actor(self, compute_fn: Callable[[float, float], tuple[float, float]]):
+        """Create a Ray actor for this operator.
+
+        Args:
+            compute_fn: Function to computes the aggregate value for the given value and intermediate value.
+                The executor batches calls to this function and jit compiles the loop using numba.
+
+        Returns:
+            A Ray actor.
+        """
+        return WindowAggExecutor.remote(self, compute_fn)
+
+
+@ray.remote
+class WindowAggExecutor(OperatorExecutor):
+    """Executor for window aggregations."""
+
+    op: WindowAggOp
     cache_conn: duckdb.DuckDBPyConnection
     compute_loop: Callable
 
-    def __init__(self, id_col: str, value_col: str, seq_col: str) -> None:
-        self.id_col = id_col
-        self.value_col = value_col
-        self.seq_col = seq_col
-
+    def __init__(self, op: WindowAggOp, compute_op: Callable) -> None:
+        self.op = op
         self.cache_conn = duckdb.connect(":memory:")
         self.cache_conn.execute(
             f"CREATE TABLE intermediates (id LONG PRIMARY KEY, value FLOAT[]);"
         )  # TODO: support other types
 
-        self.compute_loop = self.generate_compute_loop(
-            numba.njit(inline="always")(self.compute_op)
+        self.compute_loop = self._generate_compute_loop(
+            numba.njit(inline="always")(compute_op)
         )
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.id_col}, {self.value_col}, {self.seq_col})"
-
-    @staticmethod
-    def compute_op(value: float, interm_value: float) -> tuple[float, float]:
-        """Computes the aggregate value for the given value and intermediate value."""
-        raise NotImplementedError
-
     @classmethod
-    def generate_compute_loop(cls, compute_fn):
+    def _generate_compute_loop(cls, compute_fn):
         """Generates a compute loop for the given function."""
 
         @numba.njit
@@ -134,9 +156,9 @@ class AggregateOperator:
             )
             ORDER BY 1 ASC;
             """.format(
-                id_col=self.id_col,
-                value_col=self.value_col,
-                sort_col=self.seq_col,
+                id_col=self.op.id_col,
+                value_col=self.op.value_col,
+                sort_col=self.op.seq_col,
             )
         )
         interm_state = self.cache_conn.fetch_arrow_table()
@@ -154,12 +176,12 @@ class AggregateOperator:
     def run(self, tbl: Union[pa.Table, pa.RecordBatch]) -> pa.Table:
         """We assume the input table is sorted by id, through usage of a Sort operator before."""
         tbl = arrow_batch_to_table(tbl)
-        sorted_tbl = tbl.select([self.id_col, self.value_col, self.seq_col]).sort_by(
-            [(self.id_col, "ascending"), (self.seq_col, "ascending")]
-        )
+        sorted_tbl = tbl.select(
+            [self.op.id_col, self.op.value_col, self.op.seq_col]
+        ).sort_by([(self.op.id_col, "ascending"), (self.op.seq_col, "ascending")])
 
         id_array, value_array = table_arrow_to_np_arrays(
-            sorted_tbl, [self.id_col, self.value_col]
+            sorted_tbl, [self.op.id_col, self.op.value_col]
         )
         interm_id_array, interm_value_array = self.fetch_interm_state(sorted_tbl)
 
