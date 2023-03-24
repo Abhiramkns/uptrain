@@ -4,7 +4,7 @@
 outputs are stored as Arrow batches. 
 """
 
-from typing import Union, Callable, Any
+from typing import Union, Callable, Any, Protocol, runtime_checkable
 
 import duckdb
 import numpy as np
@@ -12,6 +12,10 @@ import numba
 import pyarrow as pa
 from pydantic import BaseModel
 import ray
+
+# -----------------------------------------------------------
+# utility routines for converting between Arrow and Numpy
+# -----------------------------------------------------------
 
 
 def array_np_to_arrow(arr: np.ndarray) -> pa.Array:
@@ -28,8 +32,9 @@ def array_np_to_arrow(arr: np.ndarray) -> pa.Array:
 def array_arrow_to_np(arr: pa.ListArray) -> np.ndarray:
     if isinstance(arr, pa.ChunkedArray):
         arr = arr.combine_chunks()
+
     if not pa.types.is_list(arr.type):
-        return arr.to_numpy(zero_copy_only=True)  # assume a 1D array
+        return arr.to_numpy()  # assume a 1D array
     else:
         dim1 = len(arr)  # assume a 2D array
         return np.asarray(arr.values.to_numpy()).reshape(dim1, -1)
@@ -52,18 +57,22 @@ def np_arrays_to_arrow_table(arrays: list[np.ndarray], cols: list[str]) -> pa.Ta
     )
 
 
-class Operator:
+# -----------------------------------------------------------
+# base classes for operators
+# -----------------------------------------------------------
+
+
+@runtime_checkable
+class Operator(Protocol):
     """Base class for all operators."""
 
     def make_actor(self) -> "OperatorExecutor":
         """Create a Ray actor for this operator."""
         raise NotImplementedError
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
 
-
-class OperatorExecutor:
+@runtime_checkable
+class OperatorExecutor(Protocol):
     """Base class for all operator executors."""
 
     op: Operator
@@ -71,26 +80,13 @@ class OperatorExecutor:
     def run(self, *args, **kwargs) -> pa.Table:
         raise NotImplementedError
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
 
+class WindowAggOp(BaseModel):
+    """Operator to compute a window aggregation over a column in a table (N-to-N)."""
 
-class WindowAggOp(BaseModel, Operator):
     id_col: str  # aggregations are done per id
     value_col: str  # the column to aggregate over
     seq_col: str  # the column to sort by before aggregation
-
-    def make_actor(self, compute_fn: Callable[[float, float], tuple[float, float]]):
-        """Create a Ray actor for this operator.
-
-        Args:
-            compute_fn: Function to computes the aggregate value for the given value and intermediate value.
-                The executor batches calls to this function and jit compiles the loop using numba.
-
-        Returns:
-            A Ray actor.
-        """
-        return WindowAggExecutor.remote(self, compute_fn)
 
 
 @ray.remote
@@ -102,6 +98,13 @@ class WindowAggExecutor(OperatorExecutor):
     compute_loop: Callable
 
     def __init__(self, op: WindowAggOp, compute_op: Callable) -> None:
+        """Initialize a Ray actor for the given operator.
+
+        Args:
+            op: Operator to execute.
+            compute_op: Function to computes the aggregate value for the given value and intermediate value.
+                The executor batches calls to this function and jit compiles the loop using numba.
+        """
         self.op = op
         self.cache_conn = duckdb.connect(":memory:")
         self.cache_conn.execute(
@@ -174,11 +177,10 @@ class WindowAggExecutor(OperatorExecutor):
         self.cache_conn.execute("INSERT INTO intermediates SELECT id, value FROM tbl;")
 
     def run(self, tbl: Union[pa.Table, pa.RecordBatch]) -> pa.Table:
-        """We assume the input table is sorted by id, through usage of a Sort operator before."""
         tbl = arrow_batch_to_table(tbl)
-        sorted_tbl = tbl.select(
-            [self.op.id_col, self.op.value_col, self.op.seq_col]
-        ).sort_by([(self.op.id_col, "ascending"), (self.op.seq_col, "ascending")])
+        sorted_tbl = tbl.sort_by(
+            [(self.op.id_col, "ascending"), (self.op.seq_col, "ascending")]
+        )
 
         id_array, value_array = table_arrow_to_np_arrays(
             sorted_tbl, [self.op.id_col, self.op.value_col]
@@ -189,4 +191,10 @@ class WindowAggExecutor(OperatorExecutor):
             id_array, value_array, interm_id_array, interm_value_array
         )
         self.update_interm_state(interm_id_array, new_interm_value_array)
-        return np_arrays_to_arrow_table([id_array, output_value_array], ["id", "value"])
+        return sorted_tbl.append_column("aggregate", pa.array(output_value_array))
+
+
+class ReduceOp(BaseModel):
+    """Operators that produce a single row of output (N-to-1)."""
+
+    value_col: str  # the column to aggregate over
