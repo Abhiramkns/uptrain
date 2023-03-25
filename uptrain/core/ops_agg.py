@@ -2,6 +2,7 @@
 
 from typing import Any, Callable, Literal, Union
 from itertools import product
+from functools import cache
 
 import duckdb
 import numba
@@ -33,7 +34,7 @@ class WindowAggOp(BaseModel):
     seq_col: str  # the column to sort by before aggregation
 
 
-@ray.remote
+# @ray.remote
 class WindowAggExecutor(OperatorExecutor):
     """Executor for window aggregations."""
 
@@ -54,34 +55,7 @@ class WindowAggExecutor(OperatorExecutor):
         self.cache_conn.execute(
             f"CREATE TABLE intermediates (id LONG PRIMARY KEY, value FLOAT[]);"
         )  # TODO: support other types
-
-        self.compute_loop = self._generate_compute_loop(
-            numba.njit(inline="always")(compute_op)
-        )
-
-    @classmethod
-    def _generate_compute_loop(cls, compute_fn):
-        """Generates a compute loop for the given function."""
-
-        @numba.njit
-        def compute_loop(id_array, value_array, interm_id_array, interm_value_array):
-            output_value_array = np.zeros(len(id_array))
-            new_interm_value_array = np.zeros_like(interm_value_array)
-
-            interm_idx = 0
-            interm_value = interm_value_array[interm_idx]
-            for idx, (_id, _value) in enumerate(zip(id_array, value_array)):
-                if _id != interm_id_array[interm_idx]:
-                    new_interm_value_array[interm_idx] = interm_value
-                    interm_idx += 1
-                    interm_value = interm_value_array[interm_idx]
-
-                output_value_array[idx], interm_value = compute_fn(_value, interm_value)
-            new_interm_value_array[interm_idx] = interm_value
-
-            return output_value_array, new_interm_value_array
-
-        return compute_loop
+        self.compute_loop = generate_compute_loop_for_window_agg(compute_op)
 
     def fetch_interm_state(
         self, batch: Union[pa.Table, pa.RecordBatch]
@@ -168,6 +142,33 @@ def compute_op_cosine_dist_running(
     return (1 - cos_similarity), value
 
 
+@cache
+def generate_compute_loop_for_window_agg(compute_fn):
+    """Generates a compute loop for the given function."""
+
+    inlined_fn = numba.njit(inline="always")(compute_fn)
+
+    @numba.njit
+    def compute_loop(id_array, value_array, interm_id_array, interm_value_array):
+        output_value_array = np.zeros(len(id_array))
+        new_interm_value_array = np.zeros_like(interm_value_array)
+
+        interm_idx = 0
+        interm_value = interm_value_array[interm_idx]
+        for idx, (_id, _value) in enumerate(zip(id_array, value_array)):
+            if _id != interm_id_array[interm_idx]:
+                new_interm_value_array[interm_idx] = interm_value
+                interm_idx += 1
+                interm_value = interm_value_array[interm_idx]
+
+            output_value_array[idx], interm_value = inlined_fn(_value, interm_value)  # type: ignore
+        new_interm_value_array[interm_idx] = interm_value
+
+        return output_value_array, new_interm_value_array
+
+    return compute_loop
+
+
 class L2Dist(WindowAggOp):
     """Computes the L2 distance between the current embedding and the initial/previous one."""
 
@@ -178,9 +179,9 @@ class L2Dist(WindowAggOp):
             self.mode
         )  # appease pylance since it doesn't let me compare a Literal to a string
         if mode == "initial":
-            return WindowAggExecutor.remote(self, compute_op_l2dist_initial)
+            return WindowAggExecutor(self, compute_op_l2dist_initial)
         elif mode == "running":
-            return WindowAggExecutor.remote(self, compute_op_l2dist_running)
+            return WindowAggExecutor(self, compute_op_l2dist_running)
         else:
             raise ValueError(f"Unknown mode: {mode}")
 
@@ -193,9 +194,9 @@ class CosineDist(WindowAggOp):
     def make_actor(self):
         mode = str(self.mode)
         if mode == "initial":
-            return WindowAggExecutor.remote(self, compute_op_cosine_dist_initial)
+            return WindowAggExecutor(self, compute_op_cosine_dist_initial)
         elif mode == "running":
-            return WindowAggExecutor.remote(self, compute_op_cosine_dist_running)
+            return WindowAggExecutor(self, compute_op_cosine_dist_running)
         else:
             raise ValueError(f"Unknown mode: {mode}")
 
@@ -274,9 +275,12 @@ class PartitionExecutor:
                     filter_expr = filter_expr & expr
 
             agg_actor = self.list_agg_actors[idx]
-            result_refs.append(agg_actor.run.remote(tbl.filter(filter_expr)))
+            result_refs.append(agg_actor.run(tbl.filter(filter_expr)))
 
         # TODO: for too many col-value tuples, buffer ray results and concat in batches
         # link - https://docs.ray.io/en/latest/ray-core/patterns/ray-get-too-many-objects.html
-        all_tables = [tbl for tbl in ray.get(result_refs) if tbl is not None]
+
+        # working with remote actors or nay?
+        # all_tables = [tbl for tbl in ray.get(result_refs) if tbl is not None]
+        all_tables = [tbl for tbl in result_refs if tbl is not None]
         return pa.concat_tables(all_tables)
