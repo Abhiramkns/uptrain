@@ -189,9 +189,8 @@ class L2Dist(WindowAggOp):
     mode: Literal["initial", "running"]
 
     def make_actor(self):
-        mode = str(
-            self.mode
-        )  # appease pylance since it doesn't let me compare a Literal to a string
+        # string casting to appease pylance since it doesn't let me compare a Literal to a string
+        mode = str(self.mode)
         if mode == "initial":
             return WindowAggExecutor.remote(self, compute_op_l2dist_initial)
         elif mode == "running":
