@@ -29,7 +29,7 @@ def array_np_to_arrow(arr: np.ndarray) -> pa.Array:
         )
 
 
-def array_arrow_to_np(arr: pa.ListArray) -> np.ndarray:
+def array_arrow_to_np(arr: pa.Array) -> np.ndarray:
     if isinstance(arr, pa.ChunkedArray):
         arr = arr.combine_chunks()
 
