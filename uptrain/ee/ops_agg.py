@@ -1,5 +1,6 @@
 """Operators to compute metrics over embeddings"""
 
+import uuid
 from typing import Any, Callable, Literal, Union
 from itertools import product
 from functools import cache
@@ -54,7 +55,7 @@ class WindowAggExecutor(OperatorExecutor):
                 The executor batches calls to this function and jit compiles the loop using numba.
         """
         self.op = op
-        self.cache_conn = duckdb.connect(":memory:")
+        self.cache_conn = duckdb.connect(f"{uuid.uuid4()}.duckdb")
         self.cache_conn.execute(
             f"CREATE TABLE interm_state (id STRING PRIMARY KEY, value FLOAT[]);"
         )  # TODO: support other types?
@@ -126,19 +127,19 @@ class WindowAggExecutor(OperatorExecutor):
 
 def compute_op_l2dist_initial(
     value: np.ndarray, interm_value: np.ndarray
-) -> tuple[float, np.ndarray]:
+) -> tuple[np.floating, np.ndarray]:
     return np.sum(np.square(value - interm_value)), interm_value  # type: ignore
 
 
 def compute_op_l2dist_running(
     value: np.ndarray, interm_value: np.ndarray
-) -> tuple[float, np.ndarray]:
+) -> tuple[np.floating, np.ndarray]:
     return np.sum(np.square(value - interm_value)), value  # type: ignore
 
 
 def compute_op_cosine_dist_initial(
     value: np.ndarray, interm_value: np.ndarray
-) -> tuple[float, np.ndarray]:
+) -> tuple[np.floating, np.ndarray]:
     cos_similarity = np.dot(value, interm_value) / (
         np.linalg.norm(value) * np.linalg.norm(interm_value)
     )
@@ -147,11 +148,25 @@ def compute_op_cosine_dist_initial(
 
 def compute_op_cosine_dist_running(
     value: np.ndarray, interm_value: np.ndarray
-) -> tuple[float, np.ndarray]:
+) -> tuple[np.floating, np.ndarray]:
     cos_similarity = np.dot(value, interm_value) / (
         np.linalg.norm(value) * np.linalg.norm(interm_value)
     )
     return (1 - cos_similarity), value
+
+
+def compute_op_norm_ratio_initial(
+    value: np.ndarray, interm_value: np.ndarray
+) -> tuple[np.floating, np.ndarray]:
+    ratio = np.linalg.norm(value) / max(np.linalg.norm(interm_value), 1e-6)  # type: ignore
+    return ratio, interm_value
+
+
+def compute_op_norm_ratio_running(
+    value: np.ndarray, interm_value: np.ndarray
+) -> tuple[np.floating, np.ndarray]:
+    ratio = np.linalg.norm(value) / max(np.linalg.norm(interm_value), 1e-6)  # type: ignore
+    return ratio, value
 
 
 @cache
@@ -162,6 +177,17 @@ def generate_compute_loop_for_window_agg(compute_fn: Callable) -> Callable:
 
     @numba.njit
     def compute_loop(partition_counts_array, value_array, interm_state_array):
+        """Goes through the value array and computes the output value for each value, and updating the
+        intermediate state.
+
+        Args:
+            partition_counts_array (np.ndarray): Array of counts of rows for each partition.
+            value_array (np.ndarray): Array of values to compute the output for.
+            interm_state_array (np.ndarray): Array of intermediate states for each partition.
+
+        Returns:
+            tuple[np.ndarray, np.ndarray]: The output value array and the new intermediate state array.
+        """
         output_value_array = np.zeros(len(value_array))
         new_interm_state_array = np.zeros_like(interm_state_array)
 
@@ -210,6 +236,21 @@ class CosineDist(WindowAggOp):
             return WindowAggExecutor.remote(self, compute_op_cosine_dist_initial)
         elif mode == "running":
             return WindowAggExecutor.remote(self, compute_op_cosine_dist_running)
+        else:
+            raise ValueError(f"Unknown mode: {mode}")
+
+
+class NormRatio(WindowAggOp):
+    """Computes the ratio between the current embedding and the initial/previous one."""
+
+    mode: Literal["initial", "running"]
+
+    def make_actor(self):
+        mode = str(self.mode)
+        if mode == "initial":
+            return WindowAggExecutor.remote(self, compute_op_norm_ratio_initial)
+        elif mode == "running":
+            return WindowAggExecutor.remote(self, compute_op_norm_ratio_running)
         else:
             raise ValueError(f"Unknown mode: {mode}")
 

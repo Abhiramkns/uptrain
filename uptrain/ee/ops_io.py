@@ -26,15 +26,16 @@ class ParquetWriterExecutor:
     def __init__(self, op: ParquetWriter):
         self.op = op
         self.count = 0
-        os.makedirs(self.op.dir_path, exist_ok=True)
+        if os.path.exists(self.op.dir_path):
+            print(f"Clearing up the existing directory at: {self.op.dir_path}")
+            os.system(f"rm -rf {self.op.dir_path}")
+        os.makedirs(self.op.dir_path)
 
     def run(self, tbl: pa.Table) -> None:
         import pyarrow.parquet
 
         self.count += 1
-        pa.parquet.write_table(
-            tbl, os.path.join(self.op.dir_path, f"{self.count}.parquet")
-        )
+        pa.parquet.write_table(tbl, os.path.join(self.op.dir_path, f"{self.count}.pq"))
 
 
 class DuckdbReader(BaseModel):
