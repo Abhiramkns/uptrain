@@ -1,5 +1,6 @@
 """Operators to compute metrics over embeddings"""
 
+import os
 import uuid
 from typing import Any, Callable, Literal, Union
 from itertools import product
@@ -16,7 +17,6 @@ import ray
 from .ops_base import (
     Operator,
     OperatorExecutor,
-    ReduceOp,
     arrow_batch_to_table,
     array_arrow_to_np,
     array_np_to_arrow,
@@ -55,11 +55,13 @@ class WindowAggExecutor(OperatorExecutor):
                 The executor batches calls to this function and jit compiles the loop using numba.
         """
         self.op = op
-        self.cache_conn = duckdb.connect(f"{uuid.uuid4()}.duckdb")
+        self.compute_loop = generate_compute_loop_for_window_agg(compute_op)
+
+        os.makedirs(".cache", exist_ok=True)
+        self.cache_conn = duckdb.connect(f".cache/{uuid.uuid4()}.duckdb")
         self.cache_conn.execute(
             f"CREATE TABLE interm_state (id STRING PRIMARY KEY, value FLOAT[]);"
         )  # TODO: support other types?
-        self.compute_loop = generate_compute_loop_for_window_agg(compute_op)
 
     def fetch_interm_state(self, tbl: pa.Table) -> pa.Table:
         """Fetches the intermediate state for the ids in the given table already seen by this operator,
@@ -258,6 +260,12 @@ class NormRatio(WindowAggOp):
 # -----------------------------------------------------------
 # Pairwise metrics computed over the full table at once (N-to-1)
 # -----------------------------------------------------------
+
+
+class ReduceOp(BaseModel):
+    """Operators that produce a single row of output (N-to-1)."""
+
+    value_col: str  # the column to aggregate over
 
 
 class CosineDistHistogram(ReduceOp):
