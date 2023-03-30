@@ -1,16 +1,45 @@
 import numpy as np
 
+from typing import List, Union
 
-class NormRatio:
-    def compute_distance(self, base, ref) -> float:
+from uptrain.core.classes.distances import AbstractDistance
+
+
+class NormRatio(AbstractDistance):
+    """Class that computes the normalized ratio between base and reference vectors."""
+
+    def __init__(self, norm_min: float = 1e-6):
+        self.norm_min = norm_min
+
+    def calculate_norm(self, vector) -> float:
+        if len(vector.shape) > 1:
+            return np.linalg.norm(vector, axis=1)
+        return np.abs(vector)
+
+    def compute_distance(
+        self, base: Union[List, np.ndarray], reference: Union[List, np.ndarray]
+    ) -> np.ndarray:
+        """Compute the norm ratio between base and reference vectors.
+
+        Parameters
+        ----------
+        base
+            It is the base vector for norm ratio computation.
+        reference
+            It is the reference vector for norm ratio computation.
+
+        Returns
+        -------
+        np.ndarray
+            The norm ratio between base and reference.
+        """
+
         base = np.array(base)
-        ref = np.array(ref)
-        if len(base.shape) > 1:
-            base_norm = np.linalg.norm(base, axis=1)
-        else:
-            base_norm = np.abs(base)
-        if len(ref.shape) > 1:
-            ref_norm = np.linalg.norm(ref, axis=1)
-        else:
-            ref_norm = np.abs(ref)
-        return base_norm / np.maximum(ref_norm, 1e-6)
+        reference = np.array(reference)
+
+        self.check_compatibility(base, reference)
+
+        base_norm = self.calculate_norm(base)
+        ref_norm = self.calculate_norm(reference)
+
+        return base_norm / np.maximum(ref_norm, self.norm_min)
