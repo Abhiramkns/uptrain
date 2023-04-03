@@ -4,6 +4,7 @@
 outputs are stored as Arrow batches. 
 """
 
+from __future__ import annotations
 from typing import Union, Protocol, runtime_checkable
 
 import numpy as np

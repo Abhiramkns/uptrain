@@ -1,5 +1,6 @@
 """Operators to compute metrics over embeddings"""
 
+from __future__ import annotations
 import os
 import uuid
 from typing import Any, Callable, Literal, Union

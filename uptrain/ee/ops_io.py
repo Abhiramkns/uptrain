@@ -1,5 +1,6 @@
 """Operators to compute metrics over embeddings"""
 
+from __future__ import annotations
 from typing import Optional
 
 import duckdb
