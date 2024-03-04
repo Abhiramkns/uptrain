@@ -1,0 +1,2167 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="framework/Check/">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
+    
+    
+      
+        <title>UpTrain API Reference</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.7e359304.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pre-built-evaluations-we-offer" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="UpTrain API Reference" class="md-header__button md-logo" aria-label="UpTrain API Reference" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            UpTrain API Reference
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="UpTrain API Reference" class="md-nav__button md-logo" aria-label="UpTrain API Reference" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    UpTrain API Reference
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#evaluate-the-quality-of-your-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluate the quality of your responses:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluate-the-quality-of-retrieved-context-and-response-groundedness" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluate the quality of retrieved context and response groundedness:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluations-to-safeguard-system-prompts-and-avoid-llm-mis-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluations to safeguard system prompts and avoid LLM mis-use:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluate-the-language-quality-of-the-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluate the language quality of the response:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-custom-evaluations-and-others" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining custom evaluations and others:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluate-the-conversation-as-a-whole" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluate the conversation as a whole:
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Framework
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Framework
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="framework/Check/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Check
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="framework/CheckSet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CheckSet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="framework/Remote/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Remote
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="framework/Signal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Signal
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Integrations
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Integrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="integrations/EvalLlamaIndex/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EvalLlamaIndex
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Operators
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Operators
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/Accuracy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accuracy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/ColumnComparison/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ColumnComparison
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/ColumnExpand/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ColumnExpand
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/ConceptDrift/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ConceptDrift
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/CosineSimilarity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CosineSimilarity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/Distribution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Distribution
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/Table/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Table
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/UMAP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    UMAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_9" id="__nav_4_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    IO
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_9">
+            <span class="md-nav__icon md-icon"></span>
+            IO
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/IO/BigQueryReader/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    BigQueryReader
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/IO/CsvReader/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CsvReader
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/IO/DeltaReader/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DeltaReader
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/IO/DeltaWriter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DeltaWriter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/IO/DuckDBReader/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DuckDBReader
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/IO/ExcelReader/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ExcelReader
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/IO/JsonReader/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    JsonReader
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/IO/JsonWriter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    JsonWriter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_10" id="__nav_4_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Charts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_10">
+            <span class="md-nav__icon md-icon"></span>
+            Charts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/charts/BarChart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    BarChart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/charts/CustomPlotlyChart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CustomPlotlyChart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/charts/Histogram/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Histogram
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/charts/LineChart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LineChart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/charts/MultiPlot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MultiPlot
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/charts/ScatterPlot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ScatterPlot
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_11" id="__nav_4_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Code
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_11">
+            <span class="md-nav__icon md-icon"></span>
+            Code
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_11_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_11_1" id="__nav_4_11_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    SQL
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_11_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_11_1">
+            <span class="md-nav__icon md-icon"></span>
+            SQL
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/code/SQL/ExecuteAndCompareSQL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ExecuteAndCompareSQL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/code/SQL/ParseCreateStatements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ParseCreateStatements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/code/SQL/ParseSQL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ParseSQL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/code/SQL/ValidateTables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ValidateTables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_12" id="__nav_4_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Language
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_12">
+            <span class="md-nav__icon md-icon"></span>
+            Language
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/ContextRelevance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ContextRelevance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/DocsLinkVersion/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DocsLinkVersion
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/Embedding/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Embedding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/GrammarScore/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GrammarScore
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/GuidelineAdherenceScore/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GuidelineAdherenceScore
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/KeywordDetector/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeywordDetector
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/LanguageCritique/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LanguageCritique
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/ModelGradeScore/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ModelGradeScore
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/OpenAIGradeScore/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    OpenAIGradeScore
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/OpenaiEval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    OpenaiEval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/OutputParser/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    OutputParser
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/PromptEval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PromptEval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/PromptGenerator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PromptGenerator
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/ResponseCompleteness/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ResponseCompleteness
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/ResponseCompletenessWrtContext/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ResponseCompletenessWrtContext
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/ResponseFactualScore/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ResponseFactualScore
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/ResponseRelevance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ResponseRelevance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/RougeScore/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RougeScore
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/TextComparison/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TextComparison
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/TextCompletion/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TextCompletion
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/TextLength/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TextLength
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/ToneCritique/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ToneCritique
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="operators/language/WordCount/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    WordCount
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#evaluate-the-quality-of-your-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluate the quality of your responses:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluate-the-quality-of-retrieved-context-and-response-groundedness" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluate the quality of retrieved context and response groundedness:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluations-to-safeguard-system-prompts-and-avoid-llm-mis-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluations to safeguard system prompts and avoid LLM mis-use:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluate-the-language-quality-of-the-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluate the language quality of the response:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-custom-evaluations-and-others" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining custom evaluations and others:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluate-the-conversation-as-a-whole" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluate the conversation as a whole:
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h4 align="center">
+  <a href="https://uptrain.ai">
+   <img alt="Github banner 006 (1)" src="https://github.com/uptrain-ai/uptrain/assets/108270398/96ac1505-7811-4e12-958e-fce9519542a1"/>
+  </a>
+</h4>
+
+<p align="center">
+<a href="https://demo.uptrain.ai/evals_demo/" rel="nofollow"><strong>Try out Evaluations</strong></a>
+-
+<a href="https://docs.uptrain.ai/getting-started/introduction" rel="nofollow"><strong>Read Docs</strong></a>
+-
+<a href="https://join.slack.com/t/uptraincommunity/shared_invite/zt-1yih3aojn-CEoR_gAh6PDSknhFmuaJeg" rel="nofollow"><strong>Slack Community</strong></a>
+-
+<a href="https://github.com/uptrain-ai/uptrain/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=" rel="nofollow"><strong>Feature Request</strong></a>
+</p>
+
+<h4 align="center">
+<a href='https://github.com/uptrain-ai/uptrain/blob/main/CONTRIBUTING.md'>
+    <img alt='PRs Welcome' src='https://img.shields.io/badge/PRs-welcome-blue.svg?style=shields'/>
+  </a>
+  <a href="https://github.com/uptrain-ai/uptrain/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/uptrain-ai/uptrain" />
+  </a>
+  <a href="https://docs.uptrain.ai/getting-started/quickstart">
+    <img src="https://img.shields.io/badge/Quickstart-tutorial-orange" alt="Quickstart" />
+  </a>
+  <a href="https://uptrain.ai/">
+    <img src="https://img.shields.io/badge/UpTrain-Website-red" alt="Website" />
+  </a>
+</h4>
+
+<h4 align="center">
+  <img src="https://github.com/uptrain-ai/uptrain/assets/108270398/cf3a3de8-96b6-4fd5-a589-f313cb10bbde" alt="Demo of UpTrain's LLM evaluations with scores for hallucinations, retrieved-context quality, response tonality for a customer support chatbot"/>
+</h4>
+
+<p><strong><a href="https://uptrain.ai">UpTrain</a></strong> is an open-source tool to evaluate LLM applications. UpTrain provides pre-built metrics to check LLM responses on aspects such as correctness, hallucination, toxicity, etc. as well as provides an easy-to-use framework to configure custom checks.</p>
+<h1 id="pre-built-evaluations-we-offer">Pre-built Evaluations We Offer 📝</h1>
+<h4 id="evaluate-the-quality-of-your-responses">Evaluate the quality of your responses:</h4>
+<ol>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/response_quality/completeness.ipynb">Response Completeness</a>: Grades how if the response completely resolves the given user query.</li>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/response_quality/relevance.ipynb">Response Relevance</a>: Grades how relevant the generated response is for the given question.</li>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/response_quality/conciseness.ipynb">Response Conciseness</a>: Grades how concise the generated response is i.e. the extent of additional irrelevant information in the response.</li>
+<li><a href="">Response Matching</a>: Operator to compare the llm-generated text with the gold (ideal) response using the defined score metric.</li>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/response_quality/consistency.ipynb">Response Consistency</a>: Grades how consistent the response is with the question asked as well as with the context provided.</li>
+</ol>
+<h4 id="evaluate-the-quality-of-retrieved-context-and-response-groundedness">Evaluate the quality of retrieved context and response groundedness:</h4>
+<ol>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/context_awareness/factual_accuracy.ipynb">Factual Accuracy</a>: Checks if the facts present in the response can be verified by the retrieved context</li>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/context_awareness/response_completeness_wrt_context.ipynb">Response Completeness wrt Context</a>: Grades how complete the response was for the question specified with respect to the information present in the context</li>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/context_awareness/relevance.ipynb">Context Relevance</a>: Evaluates if the retrieved context contain sufficient information to answer the given question</li>
+</ol>
+<h4 id="evaluations-to-safeguard-system-prompts-and-avoid-llm-mis-use">Evaluations to safeguard system prompts and avoid LLM mis-use:</h4>
+<ol>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/safeguarding/system_prompt_injection.ipynb">Prompt Injection</a>: Identifys prompt leakage attacks</li>
+</ol>
+<h4 id="evaluate-the-language-quality-of-the-response">Evaluate the language quality of the response:</h4>
+<ol>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/language_features/tone_critique.ipynb">Tone Critique</a>: Assesses if the tone of machine-generated responses matches with the desired persona.</li>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/language_features/language_critique.ipynb">Language Critique</a>: Scores machine generated responses on multiple aspects - fluence, politeness, grammar, and coherence.</li>
+</ol>
+<h4 id="defining-custom-evaluations-and-others">Defining custom evaluations and others:</h4>
+<ol>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/custom/guideline_adherence.ipynb">Guideline Adherence</a>: Grades how well the LLM adheres to a given custom guideline.</li>
+<li><a href="">Custom Prompt Evaluation</a>: Evaluate by defining your custom grading prompt.</li>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/other/cosine_similarity.ipynb">Cosine Similarity</a>: Calculate cosine similarity between embeddings of two texts.</li>
+</ol>
+<h4 id="evaluate-the-conversation-as-a-whole">Evaluate the conversation as a whole:</h4>
+<ol>
+<li><a href="https://github.com/uptrain-ai/uptrain/blob/main/examples/checks/evaluate_conversation_satisfaction.ipynb">Conversation Satisfaction</a>: Measures the user’s satisfaction with the conversation with the LLM/AI assistant based on completeness and user’s acceptance.</li>
+</ol>
+<h1 id="get-started">Get started 🙌</h1>
+<h3 id="install-the-package-through-pip">Install the package through pip:</h3>
+<pre><code class="language-bash">pip install uptrain
+</code></pre>
+<h3 id="how-to-use-uptrain">How to use UpTrain:</h3>
+<p>There are two ways to use UpTrain:
+1. <strong>Open-source framework:</strong> You can evaluate your responses via the open-source version by providing your OpenAI API key to run evaluations. UpTrain leverages a pipeline comprising GPT-3.5 calls for the same. Note that the evaluation pipeline runs on UpTrain's server but none of the data is logged.</p>
+<ol>
+<li><strong>UpTrain API:</strong> You can use UpTrain's managed service to log and evaluate your LLM responses. Just provide your UpTrain API key (no need for OpenAI keys) and UpTrain manages running evaluations for you with real-time dashboards and deep insights.</li>
+</ol>
+<h4 id="open-source-framework">Open-source framework:</h4>
+<p>Follow the code snippet below to get started with UpTrain.</p>
+<pre><code class="language-python">from uptrain import EvalLLM, Evals
+import json
+
+OPENAI_API_KEY = &quot;sk-***************&quot;
+
+data = [{
+    'question': 'Which is the most popular global sport?',
+    'context': &quot;The popularity of sports can be measured in various ways, including TV viewership, social media presence, number of participants, and economic impact. Football is undoubtedly the world's most popular sport with major events like the FIFA World Cup and sports personalities like Ronaldo and Messi, drawing a followership of more than 4 billion people. Cricket is particularly popular in countries like India, Pakistan, Australia, and England. The ICC Cricket World Cup and Indian Premier League (IPL) have substantial viewership. The NBA has made basketball popular worldwide, especially in countries like the USA, Canada, China, and the Philippines. Major tennis tournaments like Wimbledon, the US Open, French Open, and Australian Open have large global audiences. Players like Roger Federer, Serena Williams, and Rafael Nadal have boosted the sport's popularity. Field Hockey is very popular in countries like India, Netherlands, and Australia. It has a considerable following in many parts of the world.&quot;,
+    'response': 'Football is the most popular sport with around 4 billion followers worldwide'
+}]
+
+eval_llm = EvalLLM(openai_api_key=OPENAI_API_KEY)
+
+results = eval_llm.evaluate(
+    data=data,
+    checks=[Evals.CONTEXT_RELEVANCE, Evals.FACTUAL_ACCURACY, Evals.RESPONSE_COMPLETENESS]
+)
+
+print(json.dumps(results, indent=3))
+</code></pre>
+<p>If you have any questions, please join our <a href="https://join.slack.com/t/uptraincommunity/shared_invite/zt-1yih3aojn-CEoR_gAh6PDSknhFmuaJeg">Slack community</a></p>
+<h4 id="uptrain-api">UpTrain API:</h4>
+<ol>
+<li>
+<p>Get your free UpTrain API Key <a href="https://uptrain.ai/">here</a>.</p>
+</li>
+<li>
+<p>Follow the code snippets below to get started with UpTrain.</p>
+</li>
+</ol>
+<pre><code class="language-python">from uptrain import APIClient, Evals
+import json
+
+UPTRAIN_API_KEY = &quot;up-***************&quot; 
+
+data = [{
+    'question': 'Which is the most popular global sport?',
+    'context': &quot;The popularity of sports can be measured in various ways, including TV viewership, social media presence, number of participants, and economic impact. Football is undoubtedly the world's most popular sport with major events like the FIFA World Cup and sports personalities like Ronaldo and Messi, drawing a followership of more than 4 billion people. Cricket is particularly popular in countries like India, Pakistan, Australia, and England. The ICC Cricket World Cup and Indian Premier League (IPL) have substantial viewership. The NBA has made basketball popular worldwide, especially in countries like the USA, Canada, China, and the Philippines. Major tennis tournaments like Wimbledon, the US Open, French Open, and Australian Open have large global audiences. Players like Roger Federer, Serena Williams, and Rafael Nadal have boosted the sport's popularity. Field Hockey is very popular in countries like India, Netherlands, and Australia. It has a considerable following in many parts of the world.&quot;,
+    'response': 'Football is the most popular sport with around 4 billion followers worldwide'
+}]
+
+client = APIClient(uptrain_api_key=UPTRAIN_API_KEY)
+
+results = client.log_and_evaluate(
+    project_name=&quot;Sample-Project&quot;,
+    data=data,
+    checks=[Evals.CONTEXT_RELEVANCE, Evals.FACTUAL_ACCURACY, Evals.RESPONSE_COMPLETENESS]
+)
+
+print(json.dumps(results, indent=3))
+</code></pre>
+<p>To have a customized onboarding, please book a <a href="https://calendly.com/uptrain-sourabh/30min">demo call here</a>.</p>
+<h3 id="performing-experiments-with-uptrain">Performing experiments with UpTrain:</h3>
+<p>Experiments help you perform A/B testing with prompts, so you can compare and choose the options most suitable for you. </p>
+<pre><code class="language-python">from uptrain import APIClient, Evals
+import json
+
+UPTRAIN_API_KEY = &quot;up-***************&quot; 
+
+data = [
+    {
+        &quot;question&quot;: &quot;How can you ensure that a designed prompt elicits the desired response from a language model?&quot;,
+        &quot;context&quot;: &quot;nudge the model to generate a desired result. Prompt design can be an efficient\nway to experiment with adapting a language model for a specific use case.&quot;,
+        &quot;response&quot;: &quot;To ensure that a designed prompt elicits the desired response from a language model, you can experiment with different prompt designs that nudge the model towards generating the desired result. This can be an efficient way to adapt the language model for a specific use case.&quot;,
+        &quot;chunk_size&quot;: 200
+    },
+    {
+        &quot;question&quot;: &quot;How can you ensure that a designed prompt elicits the desired response from a language model?&quot;,
+        &quot;context&quot;: &quot;Design and save your own prompts\nPrompt design is the process of manually creating prompts that elicit the\ndesired response from a language model. By carefully crafting prompts, you can\nnudge the model to generate a desired result. Prompt design can be an efficient\nway to experiment with adapting a language model for a specific use case.\nYou can create and save your own prompts in Vertex AI Studio. When\ncreating a new prompt, you enter the prompt text, specify the model to use,\nconfigure parameter values, and test the prompt by generating a response. You\ncan iterate on the prompt and its configurations until you get the desired\nresults. When you are done designing the prompt, you can save it in\nVertex AI Studio.\nResponse citations\nIf you are using a text model in Vertex AI Studio like text-bison, you\nreceive text responses based on your input. Our features are intended to produce\noriginal content and not replicate existing content at length. If&quot;,
+        &quot;response&quot;: &quot;To ensure that a designed prompt elicits the desired response from a language model, you can manually create prompts that carefully craft the desired result. By iterating on the prompt and its configurations in Vertex AI Studio, you can experiment and adjust until you achieve the desired results. Additionally, it is important to note that the text models in Vertex AI Studio are designed to produce original content and not replicate existing content at length.&quot;,
+        &quot;chunk_size&quot;: 1000
+    }
+]
+
+client = APIClient(uptrain_api_key=UPTRAIN_API_KEY)
+
+results = client.evaluate_experiments(
+    project_name=&quot;Chunk-Size-Experiment&quot;,
+    data=data,
+    checks=[Evals.CONTEXT_RELEVANCE, Evals.RESPONSE_RELEVANCE, Evals.FACTUAL_ACCURACY],
+    exp_columns=[&quot;chunk_size&quot;]
+)
+
+print(json.dumps(results, indent=3))
+</code></pre>
+<h4> </h4>
+
+<h1 id="key-features">Key Features 💡</h1>
+<ul>
+<li><strong><a href="https://uptrain-ai.github.io/uptrain/operators/language/ModelGradeScore/">Custom Grading Checks</a></strong> - Write your custom grading prompts to use LLM as an evaluator.</li>
+<li><strong><a href="https://uptrain-ai.github.io/uptrain/operators/CosineSimilarity/">Embeddings Similarity Check</a></strong> - Compute cosine similarity between prompt-response embeddings</li>
+<li><strong><a href="https://uptrain-ai.github.io/uptrain/operators/UMAP/">UMAP Visualization and Clustering</a></strong> - Visualize your embedding space using tools like UMAP and t-SNE.</li>
+<li><strong><a href="">Feature Slicing</a></strong> - Built-in pivoting functionalities for data dice and slice to pinpoint low-performing cohorts.</li>
+<li><strong><a href="">Realtime Dashboards</a></strong> - Monitor your model's performance in realtime.</li>
+</ul>
+<h1 id="dimensions-of-llm-evaluations">Dimensions of LLM Evaluations 💡</h1>
+<h4 align="left">
+  <img width="600" src="https://github.com/uptrain-ai/uptrain/assets/108270398/6cf080ef-7aec-4609-81e1-25d667401ad4" alt="Different dimensions, metrics or criteria for LLM evaluations"/>
+</h4>
+
+<p>We recently wrote about different criteria to evaluate LLM applications and explored grouping them into categories. <a href="https://uptrain.ai/blog/how-to-evaluate-your-llm-applications">Read more about it.</a></p>
+<h1 id="integrations">Integrations</h1>
+<table>
+<thead>
+<tr>
+<th>Eval Frameworks</th>
+<th>LLM Providers</th>
+<th>LLM Packages</th>
+<th>Serving frameworks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenAI Evals ✅</td>
+<td>GPT-3.5-turbo ✅</td>
+<td>Langchain 🔜</td>
+<td>HuggingFace 🔜</td>
+</tr>
+<tr>
+<td>EleutherAI LM Eval 🔜</td>
+<td>GPT-4 ✅</td>
+<td>Llama Index 🔜</td>
+<td>Replicate 🔜</td>
+</tr>
+<tr>
+<td>BIG-Bench 🔜</td>
+<td>Claude ✅</td>
+<td>AutoGPT 🔜</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Cohere ✅</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h1 id="why-uptrain">Why UpTrain 🤔?</h1>
+<p>Large language models are trained over billions of data points and perform really well over a wide variety of tasks. But one thing these models are not good at is being deterministic. Even with the most well-crafted prompts, the model can misbehave for certain inputs, be it hallucinations, wrong output structure, toxic or biased response, irrelevant response, and error modes can be immense. </p>
+<p>To ensure your LLM applications work reliably and correctly, UpTrain makes it easy for developers to evaluate the responses of their applications on multiple criteria. UpTrain's evaluation framework can be used to:</p>
+<p>1) <strong>Improve performance by 20%</strong> - You can’t improve what you can’t measure. UpTrain continuously monitors your application's performance on multiple evaluation criterions and alerts you in case of any regressions with automatic root cause analysis.</p>
+<p>1) <strong>Iterate 3x faster</strong> - UpTrain enables fast and robust experimentation across multiple prompts, model providers, and custom configurations, by calculating quantitative scores for direct comparison and optimal prompt selection.</p>
+<p>1) <strong>Mitigate LLM Hallucinations</strong> - Hallucinations have plagued LLMs since their inception. By quantifying degree of hallucination and quality of retrieved context, UpTrain helps to detect responses with low factual accuracy and prevent them before serving to the end-users.</p>
+<h1 id="what-does-uptrain-have-to-offer">What does UpTrain have to offer? 🚀</h1>
+<p>To make it easy for you to evaluate your LLM applications, UpTrain offers:</p>
+<p>1) <strong>Diverse LLM Evaluations</strong> - UpTrain provides a diverse set of pre-built metrics like response relevance, context quality, factual accuracy, language quality, etc. to evaluate your LLM applications upon.</p>
+<p>1) <strong>Single-line Integration</strong> - With UpTrain's wide array of pre-built metrics, you can run LLM evaluations in less than two minutes.</p>
+<p>1) <strong>Customization</strong> - UpTrain is built with customization at its core, allowing you to configure custom grading prompts and operators with just a python function.</p>
+<p>We are constantly working to make UpTrain better. Want a new feature or need any integrations? Feel free to <a href="https://github.com/uptrain-ai/uptrain/issues">create an issue</a> or <a href="https://github.com/uptrain-ai/uptrain/blob/main/CONTRIBUTING.md">contribute</a> directly to the repository.</p>
+<h1 id="license">License 💻</h1>
+<p>This repo is published under Apache 2.0 license and we are committed to adding more functionalities to the UpTrain open-source repo. Upon popular demand, we have also rolled out a <a href="https://demo.uptrain.ai/dashboard">no-code self-serve console</a>. For customized onboarding, please book a <a href="https://calendly.com/uptrain-sourabh/30min">demo call here</a>.</p>
+<h1 id="stay-updated">Stay Updated ☎️</h1>
+<p>We are continuously adding tons of features and use cases. Please support us by giving the project a star ⭐!</p>
+<h1 id="provide-feedback-harsher-the-better">Provide feedback (Harsher the better 😉)</h1>
+<p>We are building UpTrain in public. Help us improve by giving your feedback <strong><a href="https://docs.google.com/forms/d/e/1FAIpQLSezGUkkC0JoEvx-0gCrRSmGutA-jqyb7kl2lomXv302_C3MnQ/viewform?usp=sf_link">here</a></strong>.</p>
+<h1 id="contributors">Contributors 🖥️</h1>
+<p>We welcome contributions to UpTrain. Please see our <a href="https://github.com/uptrain-ai/uptrain/blob/main/CONTRIBUTING.md">contribution guide</a> for details.</p>
+<p><a href="https://github.com/uptrain-ai/uptrain/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=uptrain-ai/uptrain" />
+</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.c8d2eff1.min.js"></script>
+      
+    
+  </body>
+</html>
